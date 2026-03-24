@@ -1,0 +1,4 @@
+interface:
+  display_name: "GitHub Writing Style"
+  short_description: "Branch, PR, and commit naming rules"
+  default_prompt: "Use $github-writing-style to draft branch names, PR titles, and commit messages that follow the team style."
