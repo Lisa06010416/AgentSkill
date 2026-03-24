@@ -1,6 +1,6 @@
 # Agent Skill Repo Guide
 
-This repo is the source of truth for custom skills and rules.
+This repo is used to develop, manage, and deploy skills for different platforms.
 
 ## Layout
 
