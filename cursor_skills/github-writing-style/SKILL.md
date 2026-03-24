@@ -1,0 +1,108 @@
+---
+name: github-writing-style
+description: Draft and normalize GitHub writing conventions for branch names, PR titles, and commit messages. Use when Cursor needs to propose, rewrite, or validate repository contribution text such as feature branches, bugfix branches, pull request names, squash-merge titles, or commit history wording.
+---
+
+# Github Writing Style
+
+## Overview
+
+Apply one consistent style for GitHub collaboration text. Prefer short, searchable, and action-oriented wording that makes branch lists, PR queues, and commit history easy to scan.
+
+## Quick Workflow
+
+1. Identify the change type: `feature`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, or `hotfix`.
+2. Extract the smallest useful scope from the work item, file area, or behavior change.
+3. Generate the correct artifact format:
+   - branch name: lowercase, hyphenated, no filler words
+   - PR title: imperative summary with optional scope prefix
+   - commit message: Conventional Commit style unless the repo clearly uses another convention
+4. If the input is vague, infer a concise scope instead of copying the full ticket text.
+5. If the repository already shows a different style, match the existing repo style and keep the same clarity goals.
+
+## Branch Names
+
+Use this pattern:
+
+```text
+<type>/<short-scope>
+```
+
+Rules:
+
+- Keep everything lowercase.
+- Use hyphens, not spaces or underscores.
+- Keep the scope under about 3 to 6 words.
+- Lead with the change type.
+- Remove filler like `task`, `work`, `update`, `stuff`.
+- Keep identifiers only when they add value.
+
+Examples:
+
+- `feature/user-avatar-upload`
+- `fix/login-rate-limit`
+- `refactor/payment-status-parser`
+- `docs/setup-env-vars`
+- `hotfix/checkout-null-guard`
+
+## PR Titles
+
+Use this pattern:
+
+```text
+<Type>: <imperative summary>
+```
+
+Preferred types:
+
+- `Feat`
+- `Fix`
+- `Refactor`
+- `Docs`
+- `Test`
+- `Chore`
+- `Perf`
+
+Rules:
+
+- Write the summary in imperative mood.
+- Capitalize the first word after the colon.
+- Avoid ending punctuation.
+- Keep it scannable in a PR list.
+- Add a narrow scope only when it helps.
+
+Examples:
+
+- `Feat: Add avatar upload to profile settings`
+- `Fix: Prevent duplicate order submissions`
+- `Refactor: Simplify payment state mapping`
+- `Docs: Clarify local development setup`
+- `Test: Cover retry behavior for webhook sync`
+
+## Commit Messages
+
+Use Conventional Commits by default:
+
+```text
+<type>(<scope>): <imperative summary>
+```
+
+Examples:
+
+- `feat(profile): add avatar upload flow`
+- `fix(auth): prevent duplicate refresh requests`
+- `refactor(payments): isolate status normalization`
+- `docs(readme): clarify uv setup`
+- `test(sync): cover webhook retry path`
+
+## Response Format
+
+- For one item: give only the requested branch name, PR title, or commit message.
+- For multiple options: give 3 concise candidates.
+- For a mixed request: group under `Branch`, `PR`, and `Commit`.
+
+If the request is ambiguous, make a reasonable assumption and state it in one short line.
+
+## References
+
+Read [references/examples.md](./references/examples.md) when you need more before-and-after rewrites or quick mapping from rough task text to polished GitHub wording.
