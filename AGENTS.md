@@ -18,6 +18,29 @@ Keep each skill self-contained in its own folder.
 
 > **Default rule: every change — new skills, system prompts, agent configs, or any other content — must be applied to all three platforms (`claud/`, `codex/`, `cursor/`) unless explicitly told otherwise.**
 
+## skills.json
+
+`skills.json` at the repo root is the registry of all available skills. Each entry has:
+
+| Field | Description |
+|---|---|
+| `name` | skill folder name |
+| `description` | what the skill does |
+| `tags` | array of tags; default is `["ALL"]` |
+| `default_install` | whether to install by default |
+
+### Deploy rules
+
+When deploying skills, always read `skills.json` to determine what to install:
+
+- **No tag specified** — install only skills tagged `"ALL"` that have `default_install: true`.
+- **Tag specified** — install only skills whose `tags` array contains the given tag and have `default_install: true`.
+- **`default_install: false`** — never install unless the user explicitly requests that skill by name, regardless of tags.
+
+### Keeping skills.json up to date
+
+When a skill is significantly modified (new behavior, changed scope, renamed), check whether the `description` or `tags` in `skills.json` need updating before finishing the task.
+
 ## Codex
 
 ### Skills
@@ -144,5 +167,5 @@ Cursor does not have a standalone agent config format. Use the Cursor Rules (`.m
 * Any change — skills, system prompts, agent configs, or other content — must be applied to all three platforms (`claud/`, `codex/`, `cursor/`) by default, unless explicitly told otherwise.
 * Deploying the Cursor skill is optional — skip it when a shared Claude or Codex install already covers it; deploy it when Cursor-native content or a local `.cursor/rules/` copy is needed.
 * Redeploy copied rules after changes; symlinked installs update automatically.
-* For larger changes or new skills, check README.md to see if the skill description needs to be updated or added.
-* Keep agent.md and CLAUDE.md in sync whenever either is modified.
+* For larger changes or new skills, update `skills.json` first, then check if `README.md` needs changes.
+* Keep AGENTS.md and CLAUDE.md in sync whenever either is modified.

@@ -20,8 +20,7 @@ Each skill should stay self-contained inside its own folder.
 
 ### Skills
 
-- `github-writing-style`: Draft and normalize GitHub contribution text — branch names, PR titles, squash-merge titles, and commit messages.
-- `code-review`: Code review guidelines and conventions.
+See [`skills.json`](skills.json) for the full list of available skills with descriptions, tags, and default install settings.
 
 ### System Prompts
 

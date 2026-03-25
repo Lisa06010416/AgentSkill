@@ -1,0 +1,148 @@
+---
+name: yahoo-google-docs
+description: Read Google Docs, Sheets, and Slides via gcloud ADC and Google APIs. Use when the user shares a Google Docs/Sheets/Slides/Drive URL, asks to read or fetch a Google document, or references content in Google Drive.
+---
+
+# Google Docs
+
+Read Google Workspace files using gcloud Application Default Credentials (ADC). No MCP server or OAuth app required.
+
+## Prerequisites
+
+- `gcloud` CLI installed and authenticated
+- ADC credentials at `~/.config/gcloud/application_default_credentials.json`
+- Drive API enabled on your quota project (`gcloud services enable drive.googleapis.com --project=YOUR_CORP_GCP_PROJECT_ID`)
+
+Check if ready by running:
+```bash
+gcloud auth application-default print-access-token 2>/dev/null | head -c 10 && echo "... OK"
+```
+
+If that prints a token, you're good. If not, follow the first-time setup below.
+
+## First-Time Setup
+
+These steps require browser interaction — instruct the user to run them in their terminal.
+
+> **Corp note:** Do not create personal GCP projects (e.g. via personal Gmail) — this is blocked by corp policy.
+> Use your corp account and a **corp-provisioned GCP project** as the quota project (e.g. `home-${short_id}-d` style home projects).
+
+### 1. Install gcloud CLI
+
+```bash
+brew install --cask google-cloud-sdk
+```
+
+### 2. Authenticate with ADC (corporate account)
+
+```bash
+gcloud auth application-default login \
+  --account=YOUR_CORP_EMAIL@yahooinc.com \
+  --scopes=https://www.googleapis.com/auth/cloud-platform,https://www.googleapis.com/auth/drive,https://www.googleapis.com/auth/spreadsheets
+```
+
+Sign in with your corp account in the browser. The token refreshes automatically.
+
+### 3. Set quota project (corp-provisioned project)
+
+Use your corp-provisioned GCP home project (e.g. `home-${short_id}-d`). You must have `serviceusage.services.use` on it — ask your GCP admin if needed.
+
+> **No permission?** If your corp account isn't authorized to use GCP, follow **Option 2 - Console Access Using Cloud Identity** in the [Athenz GCP SSO guide](https://git.ouryahoo.com/pages/athens/athenz-guide/gcp_sso/#cloud-identity-setup-steps) to set up your permissions first.
+
+```bash
+gcloud auth application-default set-quota-project YOUR_CORP_GCP_PROJECT_ID
+```
+
+### 4. Enable Drive API on the quota project
+
+```bash
+gcloud services enable drive.googleapis.com --project=YOUR_CORP_GCP_PROJECT_ID
+```
+
+## API Calls
+
+Fetch the token and quota project once, then use in all requests. The `x-goog-user-project` header is only included when a quota project is configured.
+
+```bash
+TOKEN=$(gcloud auth application-default print-access-token 2>/dev/null)
+QUOTA_PROJECT=$(python3 -c "import json,os; d=json.load(open(os.path.expanduser('~/.config/gcloud/application_default_credentials.json'))); print(d.get('quota_project_id',''))" 2>/dev/null)
+QUOTA_HEADER=$( [ -n "$QUOTA_PROJECT" ] && echo "-H \"x-goog-user-project: $QUOTA_PROJECT\"" || echo "" )
+```
+
+## Reading a Google Doc (Markdown)
+
+Extract the document ID from the URL, then export via Drive API with `text/markdown`:
+
+```bash
+eval curl -s \
+  -H "\"Authorization: Bearer $TOKEN\"" \
+  $QUOTA_HEADER \
+  "\"https://www.googleapis.com/drive/v3/files/<DOC_ID>/export?mimeType=text/markdown\""
+```
+
+Or without the helper (omit the quota header if none configured):
+
+```bash
+curl -s \
+  -H "Authorization: Bearer $TOKEN" \
+  "https://www.googleapis.com/drive/v3/files/<DOC_ID>/export?mimeType=text/markdown"
+```
+
+## Reading a Google Doc (Plain Text)
+
+```bash
+curl -s \
+  -H "Authorization: Bearer $TOKEN" \
+  "https://www.googleapis.com/drive/v3/files/<DOC_ID>/export?mimeType=text/plain"
+```
+
+## Reading a Google Sheet
+
+Export as CSV:
+
+```bash
+curl -s \
+  -H "Authorization: Bearer $TOKEN" \
+  "https://www.googleapis.com/drive/v3/files/<SHEET_ID>/export?mimeType=text/csv"
+```
+
+For a specific tab, append `&gid=<TAB_GID>` (find the gid in the sheet URL after `#gid=`).
+
+## Searching Google Drive
+
+```bash
+curl -s \
+  -H "Authorization: Bearer $TOKEN" \
+  "https://www.googleapis.com/drive/v3/files?q=name+contains+'<SEARCH_TERM>'&fields=files(id,name,mimeType,webViewLink)"
+```
+
+## URL Patterns
+
+Extract the document ID from these URL formats:
+- `https://docs.google.com/document/d/<DOC_ID>/edit`
+- `https://docs.google.com/spreadsheets/d/<SHEET_ID>/edit`
+- `https://docs.google.com/presentation/d/<SLIDES_ID>/edit`
+- `https://drive.google.com/file/d/<FILE_ID>/view`
+- `https://drive.google.com/open?id=<FILE_ID>`
+
+## Quota Project
+
+After ADC login, the credentials file may not have a `quota_project_id` (since no personal project is used). The `x-goog-user-project` header can be omitted in that case — Drive API calls will work without it for docs shared with your corporate account.
+
+If you do need a quota project (e.g., to avoid billing attribution errors), use a corp-managed GCP project and set it with:
+
+```bash
+gcloud auth application-default set-quota-project YOUR_CORP_PROJECT_ID
+```
+
+To check the current quota project:
+
+```bash
+python3 -c "import json, os; d=json.load(open(os.path.expanduser('~/.config/gcloud/application_default_credentials.json'))); print(d.get('quota_project_id', '(none)'))"
+```
+
+## Troubleshooting
+
+- **403 API not enabled**: Run `gcloud services enable <api>.googleapis.com --project=<QUOTA_PROJECT>`
+- **401 token expired**: Run `gcloud auth application-default login` with the scopes above
+- **Empty response**: Check that the document is shared with the authenticated account

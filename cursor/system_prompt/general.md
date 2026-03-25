@@ -7,4 +7,4 @@
 
 ## Code Comments
 
-Follow clean code standards: comment on **why**, not what. Keep comments minimal and accurate.
+- Follow clean code standards: comment on **why**, not what. Keep comments minimal and accurate.
