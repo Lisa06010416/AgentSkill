@@ -26,10 +26,3 @@ Each skill should stay self-contained inside its own folder.
 ### System Prompts
 
 - `general`: Language rules (respond in Traditional Chinese; write code/files/comments in English) and clean code comment standards.
-
-## Notes
-
-- Deploy the individual skill folder, not the whole repository.
-- Keep platform-specific files inside their own top-level folder.
-- Prefer symlinks for personal installs when possible.
-- Any change must be applied to all three platforms (`claud/`, `codex/`, `cursor/`) by default.
