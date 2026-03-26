@@ -2,11 +2,14 @@
 # Injects github-writing-style guidelines when the prompt involves git artifacts
 # (commit messages, branch names, PR titles, merge summaries).
 
+export CLAUDE_HOOK_INPUT
+CLAUDE_HOOK_INPUT=$(cat)
+
 python3 - <<'EOF'
 import json, sys, re, os
 
 try:
-    data = json.load(sys.stdin)
+    data = json.loads(os.environ.get("CLAUDE_HOOK_INPUT", "{}"))
     prompt = data.get("prompt", "")
 except Exception:
     print('{"continue": true}')
@@ -17,7 +20,7 @@ if not pattern.search(prompt):
     print('{"continue": true}')
     sys.exit(0)
 
-skill_path = os.path.expanduser("~/.claude/skills/github-writing-style/SKILL.md")
+skill_path = os.path.expanduser("~/.claude/skills/github-pr-branch-commit-style/SKILL.md")
 if not os.path.exists(skill_path):
     print('{"continue": true}')
     sys.exit(0)

@@ -10,11 +10,5 @@
     "description": "Perform a structured code review on diffs, files, or selected code.",
     "tags": ["ALL"],
     "default_install": true
-  },
-  {
-    "name": "yahoo-google-docs",
-    "description": "Read Google Docs, Sheets, and Slides via gcloud ADC and Google APIs. Requires gcloud CLI and ADC credentials.",
-    "tags": ["YAHOO"],
-    "default_install": false
   }
 ]
