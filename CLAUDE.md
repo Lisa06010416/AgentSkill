@@ -106,6 +106,29 @@ Repo-local install:
 <repo>/.claude/skills/<skill-name>/
 ```
 
+### Hooks
+
+Skills may include a `hooks/trigger.sh` that auto-injects the skill when relevant keywords appear in the user's prompt. After installing a skill, register its hook in `~/.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/skills/<skill-name>/hooks/trigger.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Symlinked installs pick up hook changes automatically.
+
 ### Agent MD
 
 `claud/agent_md/CLAUDE.md` deploys as `~/.claude/CLAUDE.md` (user-level agent instructions).

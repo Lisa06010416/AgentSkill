@@ -1,7 +1,6 @@
 ---
-description: Draft and normalize GitHub writing conventions for branch names, PR titles, and commit messages. Use when asked to propose, rewrite, or validate repository contribution text such as feature branches, bugfix branches, pull request names, squash-merge titles, or commit history wording.
-globs:
-alwaysApply: false
+name: github-pr-branch-commit-style
+description: Draft and normalize GitHub writing conventions for branch names, PR titles, and commit messages. Use when Claude needs to propose, rewrite, or validate repository contribution text such as feature branches, bugfix branches, pull request names, squash-merge titles, or commit history wording.
 ---
 
 # Github Writing Style
@@ -111,3 +110,7 @@ Examples:
 - For a mixed request: group under `Branch`, `PR`, and `Commit`.
 
 If the request is ambiguous, make a reasonable assumption and state it in one short line.
+
+## References
+
+Read [references/examples.md](./references/examples.md) when you need more before-and-after rewrites or quick mapping from rough task text to polished GitHub wording.

@@ -1,6 +1,6 @@
 [
   {
-    "name": "github-writing-style",
+    "name": "github-pr-branch-commit-style",
     "description": "Draft and normalize GitHub contribution text — branch names, PR titles, squash-merge titles, and commit messages.",
     "tags": ["ALL"],
     "default_install": true
