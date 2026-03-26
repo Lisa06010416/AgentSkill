@@ -20,7 +20,7 @@ Each skill should stay self-contained inside its own folder.
 
 ### Skills
 
-See [`skills.json`](skills.json) for the full list of available skills with descriptions, tags, and default install settings.
+See [`config/skills.json`](config/skills.json) for the full list of available skills with descriptions, tags, and default install settings.
 
 ### System Prompts
 

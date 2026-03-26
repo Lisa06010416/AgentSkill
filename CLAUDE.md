@@ -5,22 +5,22 @@ This repo is used to develop, manage, and deploy skills for different platforms.
 ## Layout
 
 * `codex/skills/`: Codex skills
-* `codex/system_prompt/`: Codex system prompts
-* `codex/agent/`: Codex agent configs
+* `codex/agent_md/`: Codex agent instruction file (deploys as `AGENTS.md`)
+* `codex/agents/`: Codex agent configs
 * `cursor/skills/`: Cursor rules or rule-like packages
-* `cursor/system_prompt/`: Cursor system prompts
-* `cursor/agent/`: Cursor agent configs
+* `cursor/agent_md/`: Cursor agent instruction file (deploys as Cursor User Rules)
+* `cursor/agents/`: Cursor agent configs
 * `claud/skills/`: Claude skills
-* `claud/system_prompt/`: Claude system prompts
-* `claud/agent/`: Claude agent configs
+* `claud/agent_md/`: Claude agent instruction file (deploys as `~/.claude/CLAUDE.md`)
+* `claud/agents/`: Claude agent configs
 
 Keep each skill self-contained in its own folder.
 
-> **Default rule: every change — new skills, system prompts, agent configs, or any other content — must be applied to all three platforms (`claud/`, `codex/`, `cursor/`) unless explicitly told otherwise.**
+> **Default rule: every change — new skills, agent_md files, agent configs, or any other content — must be applied to all three platforms (`claud/`, `codex/`, `cursor/`) unless explicitly told otherwise.**
 
-## skills.json
+## config/skills.json
 
-`skills.json` at the repo root is the registry of all available skills. Each entry has:
+`config/skills.json` is the registry of all available skills. Each entry has:
 
 | Field | Description |
 |---|---|
@@ -31,15 +31,15 @@ Keep each skill self-contained in its own folder.
 
 ### Deploy rules
 
-When deploying skills, always read `skills.json` to determine what to install:
+When deploying skills, always read `config/skills.json` to determine what to install:
 
 - **No tag specified** — install only skills tagged `"ALL"` that have `default_install: true`.
 - **Tag specified** — install only skills whose `tags` array contains the given tag and have `default_install: true`.
 - **`default_install: false`** — never install unless the user explicitly requests that skill by name, regardless of tags.
 
-### Keeping skills.json up to date
+### Keeping config/skills.json up to date
 
-When a skill is significantly modified (new behavior, changed scope, renamed), check whether the `description` or `tags` in `skills.json` need updating before finishing the task.
+When a skill is significantly modified (new behavior, changed scope, renamed), check whether the `description` or `tags` in `config/skills.json` need updating before finishing the task.
 
 ## Codex
 
@@ -57,14 +57,20 @@ rm -rf ~/.agents/skills/<skill-name>
 ln -s "$(pwd)/codex/skills/<skill-name>" ~/.agents/skills/<skill-name>
 ```
 
-### System Prompt
+### Agent MD
 
-Personal install from the repo root:
+`codex/agent_md/AGENTS.md` deploys as the `AGENTS.md` agent instruction file.
+
+Personal install (user-level):
 
 ```bash
-mkdir -p ~/.agents/system_prompt
-rm -rf ~/.agents/system_prompt/<prompt-name>
-ln -s "$(pwd)/codex/system_prompt/<prompt-name>" ~/.agents/system_prompt/<prompt-name>
+cp "$(pwd)/codex/agent_md/AGENTS.md" ~/AGENTS.md
+```
+
+Project-level install:
+
+```bash
+cp "$(pwd)/codex/agent_md/AGENTS.md" <repo>/AGENTS.md
 ```
 
 ### Agent
@@ -74,7 +80,7 @@ Personal install from the repo root:
 ```bash
 mkdir -p ~/.agents/agents
 rm -rf ~/.agents/agents/<agent-name>
-ln -s "$(pwd)/codex/agent/<agent-name>" ~/.agents/agents/<agent-name>
+ln -s "$(pwd)/codex/agents/<agent-name>" ~/.agents/agents/<agent-name>
 ```
 
 ## Claude
@@ -100,14 +106,20 @@ Repo-local install:
 <repo>/.claude/skills/<skill-name>/
 ```
 
-### System Prompt
+### Agent MD
 
-Personal install from the repo root:
+`claud/agent_md/CLAUDE.md` deploys as `~/.claude/CLAUDE.md` (user-level agent instructions).
+
+Personal install:
 
 ```bash
-mkdir -p ~/.claude/system_prompt
-rm -rf ~/.claude/system_prompt/<prompt-name>
-ln -s "$(pwd)/claud/system_prompt/<prompt-name>" ~/.claude/system_prompt/<prompt-name>
+cp "$(pwd)/claud/agent_md/CLAUDE.md" ~/.claude/CLAUDE.md
+```
+
+Repo-local install:
+
+```bash
+cp "$(pwd)/claud/agent_md/CLAUDE.md" <repo>/CLAUDE.md
 ```
 
 ### Agent
@@ -117,7 +129,7 @@ Personal install from the repo root:
 ```bash
 mkdir -p ~/.claude/agents
 rm -rf ~/.claude/agents/<agent-name>
-ln -s "$(pwd)/claud/agent/<agent-name>" ~/.claude/agents/<agent-name>
+ln -s "$(pwd)/claud/agents/<agent-name>" ~/.claude/agents/<agent-name>
 ```
 
 Repo-local install:
@@ -147,13 +159,13 @@ mkdir -p <repo>/.cursor/rules
 cp ./cursor/skills/<rule-folder>/<rule-file>.mdc <repo>/.cursor/rules/
 ```
 
-### System Prompt
+### Agent MD
 
-Cursor system prompts are configured manually via the UI:
+`cursor/agent_md/user_rules.md` deploys as Cursor's User Rules (configured via UI).
 
 1. Open Cursor Settings (`Cmd + Shift + J`)
 2. Select **Rules** in the sidebar
-3. Paste the content of the prompt file into **User Rules**
+3. Paste the content of `cursor/agent_md/user_rules.md` into **User Rules**
 
 ### Agent
 
@@ -164,8 +176,8 @@ Cursor does not have a standalone agent config format. Use the Cursor Rules (`.m
 * Deploy the individual skill folder, not the whole repo.
 * Prefer symlinks for Codex and Claude personal installs.
 * Keep platform-specific files inside their own top-level folder.
-* Any change — skills, system prompts, agent configs, or other content — must be applied to all three platforms (`claud/`, `codex/`, `cursor/`) by default, unless explicitly told otherwise.
+* Any change — skills, agent_md files, agent configs, or other content — must be applied to all three platforms (`claud/`, `codex/`, `cursor/`) by default, unless explicitly told otherwise.
 * Deploying the Cursor skill is optional — skip it when a shared Claude or Codex install already covers it; deploy it when Cursor-native content or a local `.cursor/rules/` copy is needed.
 * Redeploy copied rules after changes; symlinked installs update automatically.
-* For larger changes or new skills, update `skills.json` first, then check if `README.md` needs changes.
+* For larger changes or new skills, update `config/skills.json` first, then check if `README.md` needs changes.
 * Keep AGENTS.md and CLAUDE.md in sync whenever either is modified.

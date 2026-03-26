@@ -1,4 +1,4 @@
-# Cursor System Prompt
+# Agent Instructions
 
 ## Language
 
